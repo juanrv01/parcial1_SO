@@ -19,7 +19,7 @@ public:
 	int completionTime=0;
 	int responseTime=0;
 	int turnAroundTime=0;
-	int burstLeft=burstTime;
+	int burstDone=0;
 
     Proceso(const string& lbl, int bt, int at, int q, int pr)
         : label(lbl), burstTime(bt), arrivalTime(at), queue(q), priority(pr) {}
@@ -28,18 +28,29 @@ public:
 //Definicion de mis funciones
 
 //Funcion sort que organiza las queue de acuerdo a su prioridad
-void sort_Queue(std::vector<Proceso>& procesos) {
+void sort_Queue(vector<Proceso>& procesos) {
     std::sort(procesos.begin(), procesos.end(), [](const Proceso& a, const Proceso& b) {
         return a.priority > b.priority; // Ordenar de mayor a menor
     });
 }
 
+void algorithm_order(vector<Proceso> queue, int quantum_1, int quantum_2) {
+	int sum_Quantum = quantum_1+quantum_2;
+	if (queue.front().burstLeft >= 0 && queue.front().burstLeft <quantum_1) {
+		round_robin(queue,quantum_1);
+	} else if (queue.front().burstLeft >= quantum_1 && queue_1.front().burstLeft <sum_Quantum) {
+		round_robin(queue_1,quantum_2);
+	} else if (queue.front().burstLeft >=sum_Quantum) {
+		cout << "Se ejecuta el algoritmo 3" <<endl;
+	}
+}
+
 //Round robin
 void round_robin (vector<Proceso> queue, int quantum) {
-	queue.front().completionTime ++;
-	if (queue.front().completionTime==queue.front().burstTime) {
+	queue.front().burstDone ++;
+	if (queue.front().burstDone==queue.front().burstTime) {
 		queue.erase(queue.begin());
-	} else if (queue.front().completionTime%quantum ==0 && queue.size()>1) {
+	} else if (queue.front().burstDone%quantum ==0 && queue.size()>1) {
 		queue.push_back(queue.front());
 		queue.erase(queue.begin());
 	}
@@ -121,46 +132,18 @@ string nombreArchivo = argv[1];
 			sort_Queue(queue_3);
 		}
 		
-
-
 		while (clock >=1)
 		{
 			if(queue_1.size()>0) {
-				/*
-				if (/* condition )
-				{
-					round_robin(queue_1,1);
-
-				} else if (/* condition )
-				{
-					round_robin(queue_1,3);
-				} else if (/* condition )
-				{
-					/* code 
-				}
-				*/
-				
-				
-				
-				
-
+				algorithm_order(queue_1,1,3);
 			} else if (queue_2.size()>0) {
-				round_robin(queue_2,3);
-				round_robin(queue_2,5);
-
+				algorithm_order(queue_2,3,5);
 			} else if (queue_3.size()>0){
-				round_robin(queue_3,2);
-				round_robin(queue_3,3);
+				algorithm_order(queue_3,2,3);
 			}
 		}
-		
-		
-
-	
-		
 	}
-	
-	//cout << finishTime << endl;
-    return 0;
+	cout << finishTime << endl;
+    	return 0;
 }
 	
