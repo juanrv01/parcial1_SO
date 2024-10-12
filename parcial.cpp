@@ -36,11 +36,11 @@ void sort_Queue(vector<Proceso>& procesos) {
 
 void algorithm_order(vector<Proceso> queue, int quantum_1, int quantum_2) {
 	int sum_Quantum = quantum_1+quantum_2;
-	if (queue.front().burstLeft >= 0 && queue.front().burstLeft <quantum_1) {
+	if (queue.front().burstDone >= 0 && queue.front().burstDone <quantum_1) {
 		round_robin(queue,quantum_1);
-	} else if (queue.front().burstLeft >= quantum_1 && queue_1.front().burstLeft <sum_Quantum) {
-		round_robin(queue_1,quantum_2);
-	} else if (queue.front().burstLeft >=sum_Quantum) {
+	} else if (queue.front().burstDone >= quantum_1 && queue.front().burstDone <sum_Quantum) {
+		round_robin(queue,quantum_2);
+	} else if (queue.front().burstDone >=sum_Quantum) {
 		cout << "Se ejecuta el algoritmo 3" <<endl;
 	}
 }
