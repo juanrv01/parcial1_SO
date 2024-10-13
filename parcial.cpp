@@ -23,6 +23,27 @@ public:
 
     Proceso(const string& lbl, int bt, int at, int q, int pr)
         : label(lbl), burstTime(bt), arrivalTime(at), queue(q), priority(pr) {}
+
+    void add_burstDone() {
+    	burstDone++;
+    }
+
+    void add_waitingTime() {
+    	waitingTime=;
+    }
+
+    void set_responseTime(int a) {
+    	responseTime= a;
+    }
+
+    void set_completionTime(int a) {
+    	completionTime= a;
+    }
+ 
+    void set_turnAroundTime() {
+    	turnAroundTime = completionTime - arrivalTime;
+    }
+
 };
 
 //Definicion de mis funciones
@@ -35,26 +56,34 @@ void sort_Queue(vector<Proceso>& procesos) {
 }
 
 //Round robin
-void round_robin (vector<Proceso> queue, int quantum) {
-	queue.front().burstDone ++;
-	if (queue.front().burstDone==queue.front().burstTime) {
-		queue.erase(queue.begin());
-	} else if (queue.front().burstDone%quantum ==0 && queue.size()>1) {
+vector<Proceso> round_robin (vector<Proceso> queue, int quantum) {
+	queue.front().add_burstDone;
+	for (const auto& Proceso : queue)
+	{
+		Proceso.add_waitingTime;
+	}
+	queue.front().waitingTime--;
+	
+	if (queue.front().burstDone%quantum ==0 && queue.size()>1) {
 		queue.push_back(queue.front());
 		queue.erase(queue.begin());
 	}
+	return queue;
 }
 
 //Fifo
+vector<Proceso> fifo (vector<Proceso> queue) {
+	queue.front.burstDone ++
+}
 
 //Orden de ejecucion de round robin
 int round_robin_algorithm_order(vector<Proceso> queue, int quantum_1, int quantum_2) {
 	
 	int sum_Quantum = quantum_1+quantum_2;
 	if (queue.front().burstDone >= 0 && queue.front().burstDone <quantum_1) {
-		round_robin(queue,quantum_1);
+		queue = round_robin(queue,quantum_1);
 	} else if (queue.front().burstDone >= quantum_1 && queue.front().burstDone <sum_Quantum) {
-		round_robin(queue,quantum_2);
+		queue = round_robin(queue,quantum_2);
 	} else if (queue.front().burstDone >=sum_Quantum) {
 		return 0;
 		break;
