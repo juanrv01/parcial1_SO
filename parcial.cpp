@@ -45,19 +45,39 @@ void round_robin (vector<Proceso> queue, int quantum) {
 	}
 }
 
-void algorithm_order(vector<Proceso> queue, int quantum_1, int quantum_2) {
+//Fifo
 
+//Orden de ejecucion de round robin
+int round_robin_algorithm_order(vector<Proceso> queue, int quantum_1, int quantum_2) {
+	
 	int sum_Quantum = quantum_1+quantum_2;
 	if (queue.front().burstDone >= 0 && queue.front().burstDone <quantum_1) {
 		round_robin(queue,quantum_1);
 	} else if (queue.front().burstDone >= quantum_1 && queue.front().burstDone <sum_Quantum) {
 		round_robin(queue,quantum_2);
 	} else if (queue.front().burstDone >=sum_Quantum) {
-		cout << "Se ejecuta el algoritmo 3" <<endl;
+		return 0;
+		break;
 	}
+	return 1;
 }
 
+void third_algorithm_logic(vector<Proceso> queue, int queue_num, int responseRR) {
+	if (responseRR == 0)
+	{
+		switch(queue_num) {
+			case 1:
 
+				break;
+			case 2:
+
+				break;
+			case 3:
+
+				break;
+		}
+	}
+}
 
 
 //Funcion que recibe los datos de entrada
@@ -136,15 +156,18 @@ string nombreArchivo = argv[1];
 		}
 		
 		//Quiero ingresar este comentario	
-
+		int responseRR;
 		while (clock >=1)
 		{
 			if(queue_1.size()>0) {
-				algorithm_order(queue_1,1,3);
+				responseRR = round_robin_algorithm_order(queue_1,1,3);
+				third_algorithm_logic(queue_1,1,responseRR);
 			} else if (queue_2.size()>0) {
-				algorithm_order(queue_2,3,5);
+				responseRR = round_robin_algorithm_order(queue_2,3,5);
+				third_algorithm_logic(queue_2,2,responseRR);
 			} else if (queue_3.size()>0){
-				algorithm_order(queue_3,2,3);
+				responseRR = round_robin_algorithm_order(queue_3,2,3);
+				third_algorithm_logic(queue_3,3,responseRR);
 			}
 		}
 	}
