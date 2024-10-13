@@ -13,16 +13,17 @@ using namespace std;
 //Definicion de la clase proceso
 class Proceso {
 public:
+    // atributos con entradas del archivo de texto
     string label;
-    int burstTime,arrivalTime,queue,priority;
-	int waitingTime=0;
-	int completionTime=0;
-	int responseTime=0;
-	int turnAroundTime=0;
-	int burstDone=0;
+    int burstTime,arrivalTime,queue,priority; 
+    // atributos con valores inicializados
+	int waitingTime, completionTime,responseTime,turnAroundTime,burstDone;
+	bool finish;
 
     Proceso(const string& lbl, int bt, int at, int q, int pr)
-        : label(lbl), burstTime(bt), arrivalTime(at), queue(q), priority(pr) {}
+        : label(lbl), burstTime(bt), arrivalTime(at), queue(q), priority(pr) ,waitingTime(0),completionTime(0),responseTime(0),turnAroundTime(0),burstDone(0),finish(false){
+
+        }
 
     void add_burstDone() {
     	burstDone++;
@@ -44,6 +45,10 @@ public:
     	turnAroundTime = completionTime - arrivalTime;
     }
 
+    void set_finish () {
+    	finish = true;
+    }
+
 };
 
 //Definicion de mis funciones
@@ -63,7 +68,7 @@ vector<Proceso> round_robin (vector<Proceso> queue, int quantum) {
 		Proceso.add_waitingTime;
 	}
 	queue.front().waitingTime--;
-	
+
 	if (queue.front().burstDone%quantum ==0 && queue.size()>1) {
 		queue.push_back(queue.front());
 		queue.erase(queue.begin());
@@ -73,7 +78,11 @@ vector<Proceso> round_robin (vector<Proceso> queue, int quantum) {
 
 //Fifo
 vector<Proceso> fifo (vector<Proceso> queue) {
-	queue.front.burstDone ++
+	queue.front().burstDone ++
+	if (queue.front().burstDone==queue.front().burstTime)
+	{
+		queue.front().set
+	}
 }
 
 //Orden de ejecucion de round robin
@@ -151,6 +160,7 @@ int main(int argc, char* argv[]) {
 string nombreArchivo = argv[1]; 
     vector<Proceso> procesos = leerProcesosDesdeArchivo(nombreArchivo);
 	vector<Proceso> queue_1, queue_2, queue_3;
+	vector<Proceso> procesos_terminados;
 	int finishTime=0;
 
     for (const auto& Proceso : procesos) {
@@ -187,9 +197,9 @@ string nombreArchivo = argv[1];
 		//Quiero ingresar este comentario	
 		int responseRR;
 		while (clock >=1)
-		{
-			if(queue_1.size()>0) {
-				responseRR = round_robin_algorithm_order(queue_1,1,3);
+		{	
+			if(queue_1.size()>0) { 
+				responseRR = round_robin_algorithm_order(queue_1,1,3); 
 				third_algorithm_logic(queue_1,1,responseRR);
 			} else if (queue_2.size()>0) {
 				responseRR = round_robin_algorithm_order(queue_2,3,5);
