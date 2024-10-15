@@ -91,8 +91,16 @@ vector<Proceso> leerProcesosDesdeArchivo(const string& nombreArchivo) {
     return procesos;
 }
 
+void sort_Queue(vector<Proceso*> procesos) {
+    sort(procesos.begin(), procesos.end(), [](const Proceso& a, const Proceso& b) {
+        return (a.burstTime-a.burstDone) < (b.burstTime-b.burstDone); // Ordenar de menor a mayot
+    });
+}
+
 void roundrobin_1 (vector<Proceso*> queue, int quantum, int clock) {
+	int processIndex = 0;
     for (auto Proceso:queue) {
+    	processIndex++;
         Proceso->add_waitingTime();
         if (Proceso->finish==false && Proceso->rr1finish==false) {
             Proceso->add_burstDone();
@@ -100,8 +108,10 @@ void roundrobin_1 (vector<Proceso*> queue, int quantum, int clock) {
                 Proceso->set_responseTime(clock-1);
             } 
 
-            if (Proceso->burstDone == Procesol->burstTime){
+            if (Proceso->burstDone == Proceso->burstTime){
                 Proceso->set_completionTime(clock);
+               	Proceso->finish == true;
+               	queue.erase(queue.begin()+processIndex);
             } else if (Proceso->burstDone==quantum) {
                 Proceso->rr1finish==true;
             }
@@ -111,22 +121,42 @@ void roundrobin_1 (vector<Proceso*> queue, int quantum, int clock) {
 }
 
 void roundrobin_2 (vector<Proceso*> queue, int quantum_1, int quantum_2,int clock) {
+    int sum_quantum = quantum_1 + quantum_2;
+    int processIndex = 0;
     for (auto Proceso:queue) {
-        if (Proceso->finish==false && Proceso->rr2finish==false && Proceso->rr1finish == true) {
-            procesoActual = Proceso;
-            procesoActual->add_burstDone();
-            if (procesoActual->burstDone==1) {
-                procesoActual->set_responseTime(clock-1);
-            } 
-
-            if (procesoActual->burstDone == procesoActual->burstTime){
-                procesoActual->set_completionTime(clock);
-            } else if (procesoActual->burstDone==quantum) {
-                procesoActual->rr1finish==true;
+        processIndex++;
+        Proceso->add_waitingTime();
+        if (Proceso->finish==false && Proceso->rr1finish==true && Proceso->rr2finish==false) {
+            Proceso->add_burstDone();
+            if (Proceso->burstDone == Proceso->burstTime){
+                Proceso->set_completionTime(clock);
+               	Proceso->finish == true;
+               	queue.erase(queue.begin()+processIndex);
+            } else if (Proceso->burstDone==sum_quantum) {
+                Proceso->rr2finish==true;
             }
-            procesoActual->waitingTime--;
-        } 
+            Proceso->waitingTime--;
+       } 
     }
+}
+
+int SJF (vector<Proceso*> queue, int clock) {
+    int new_clock;
+    int burstleft = queue.front()->burstTime - queue.front()->burstDone;
+    queue.front()->burstDone = queue.front()->burstTime;
+    new_clock =clock + burstleft;
+    queue.front()->completionTime = new_clock;
+    queue.erase(queue.begin());
+    sort_Queue(queue);
+    for (auto Proceso: queue)
+    {
+        burstleft = queue.front()->burstTime - queue.front()->burstDone;
+        queue.front()->burstDone = queue.front()->burstTime;
+        new_clock += burstleft;
+        queue.front()->completionTime = new_clock;
+        queue.erase(queue.begin());
+    }
+    return new_clock;
 }
 
 void add_waiting_time_other_queues(vector<Proceso*> queue_1,vector<Proceso*> queue_2) {
@@ -175,14 +205,15 @@ int main(int argc, char* argv[]) {
             if (queue_1.size() > 0) {
                 roundrobin_1(queue_1,1,clock);
                 roundrobin_2(queue_1,1,3,clock);
+                clock = SJF(queue_1,clock);
                 add_waiting_time_other_queues(queue_2,queue_3);
             } else if (queue_2.size() > 0) {
-                roundrobin_1(queue_2,1,clock);
-                roundrobin_2(queue_2,1,3,clock);
+                roundrobin_1(queue_2,3,clock);
+                roundrobin_2(queue_2,3,5,clock);
                 add_waiting_time_other_queues(queue_1,queue_3);
             } else if (queue_3.size() > 0) {
-                roundrobin_1(queue_3,1,clock);
-                roundrobin_2(queue_3,1,3,clock);
+                roundrobin_1(queue_3,2,clock);
+                roundrobin_2(queue_3,2,3,clock);
                 add_waiting_time_other_queues(queue_1,queue_2);
             }
             
@@ -191,8 +222,8 @@ int main(int argc, char* argv[]) {
 
     for (const auto& Proceso : procesos)
     {
-    	cout<< Proceso->label << "#" << Proceso->burstTime << "#" << Proceso->arrivalTime << "#" << Proceso->queue << "#" << Proceso->priority << "#" << 
-    	Proceso->waitingTime << "#" << Proceso->completionTime << "#" << Proceso-> responseTime << "#" << Proceso->turnAroundTime <<endl;
+    	cout<< Proceso.label << "#" << Proceso.burstTime << "#" << Proceso.arrivalTime << "#" << Proceso.queue << "#" << Proceso.priority << "#" << 
+    	Proceso.waitingTime << "#" << Proceso.completionTime << "#" << Proceso. responseTime << "#" << Proceso.turnAroundTime <<endl;
     }
     return 0;
 }
