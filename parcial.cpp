@@ -92,33 +92,27 @@ vector<Proceso> leerProcesosDesdeArchivo(const string& nombreArchivo) {
 }
 
 void roundrobin_1 (vector<Proceso*> queue, int quantum, int clock) {
-    Proceso* procesoActual;
-    
     for (auto Proceso:queue) {
         Proceso->add_waitingTime();
         if (Proceso->finish==false && Proceso->rr1finish==false) {
-            procesoActual = Proceso;
-            procesoActual->add_burstDone();
-            if (procesoActual->burstDone==1) {
-                procesoActual->set_responseTime(clock-1);
+            Proceso->add_burstDone();
+            if (Proceso->burstDone==1) {
+                Proceso->set_responseTime(clock-1);
             } 
 
-            if (procesoActual->burstDone == procesoActual->burstTime){
-                procesoActual->set_completionTime(clock);
-            } else if (procesoActual->burstDone==quantum) {
-                procesoActual->rr1finish==true;
+            if (Proceso->burstDone == Procesol->burstTime){
+                Proceso->set_completionTime(clock);
+            } else if (Proceso->burstDone==quantum) {
+                Proceso->rr1finish==true;
             }
-            procesoActual->waitingTime--;
+            Proceso->waitingTime--;
        } 
     }
 }
 
 void roundrobin_2 (vector<Proceso*> queue, int quantum_1, int quantum_2,int clock) {
-    Proceso* procesoActual;
-    
     for (auto Proceso:queue) {
-        Proceso->add_waitingTime();
-        if (Proceso->finish==false && Proceso->rr1finish==false) {
+        if (Proceso->finish==false && Proceso->rr2finish==false && Proceso->rr1finish == true) {
             procesoActual = Proceso;
             procesoActual->add_burstDone();
             if (procesoActual->burstDone==1) {
@@ -131,7 +125,7 @@ void roundrobin_2 (vector<Proceso*> queue, int quantum_1, int quantum_2,int cloc
                 procesoActual->rr1finish==true;
             }
             procesoActual->waitingTime--;
-       } 
+        } 
     }
 }
 
@@ -193,6 +187,12 @@ int main(int argc, char* argv[]) {
             }
             
         }
+    }
+
+    for (const auto& Proceso : procesos)
+    {
+    	cout<< Proceso->label << "#" << Proceso->burstTime << "#" << Proceso->arrivalTime << "#" << Proceso->queue << "#" << Proceso->priority << "#" << 
+    	Proceso->waitingTime << "#" << Proceso->completionTime << "#" << Proceso-> responseTime << "#" << Proceso->turnAroundTime <<endl;
     }
     return 0;
 }
